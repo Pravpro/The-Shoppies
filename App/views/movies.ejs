@@ -25,7 +25,7 @@
 				<ul class="list-group list-group-flush">
 					<% user.nominations.forEach( nomId => { %>
 						<li class="list-group-item">
-							<%- axios.get("https://www.omdbapi.com/?i=" + nomId + "&apikey=746de64b")%>
+							<%= nomId %>
 						</li>
 					<% }) %>
 				</ul>

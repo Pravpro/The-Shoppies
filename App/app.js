@@ -55,6 +55,10 @@ app.post("/nominate", (req, res) => {
 		else {
 			user.nominations.push(req.body.movieId);
 		}
+		user.save()
+		.then(user => console.log(user))
+		.catch(err => console.log(err));
+		
 		let nomsLeft = 5 - user.nominations.length;
 		res.send({nomsLeft : nomsLeft.toString()});
 	})

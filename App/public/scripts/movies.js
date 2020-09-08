@@ -34,10 +34,21 @@ function searchAndDisplay(query) {
 }
 
 
-function nominate(id){
+// async function nominate(id){
+	
+// }
+
+$("#search-btn").on("click", () => {
+	searchAndDisplay($("#search").val());
+});
+
+
+$(document).on("click", ".nominate", function() {
+	let imdbID = $(this).next().val();
+	console.log(imdbID);
 	axios.post("/nominate", {
 		userId: $("#user-id").val(),
-		movieId: id
+		movieId: imdbID
 	})
 	.then(response => {
 		if(response.status == 200){
@@ -51,17 +62,6 @@ function nominate(id){
 		}
 	})
 	.catch(error => console.log(error));
-}
-
-$("#search-btn").on("click", () => {
-	searchAndDisplay($("#search").val());
-});
-
-
-$(document).on("click", ".nominate", function() {
-	let imdbID = $(this).next().val();
-	console.log(imdbID);
-	nominate(imdbID);
 })
 
 $("#search").on("keypress", e => {
