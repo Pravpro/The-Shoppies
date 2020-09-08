@@ -8,6 +8,7 @@ mongoose.connect("mongodb://localhost:27017/shoppies", { useNewUrlParser: true, 
 .catch(err => console.log(err));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // User - email, pasword, nominations
@@ -47,7 +48,7 @@ app.get("/movies", (req, res) => {
 })
 
 app.post("/nominate", (req, res) => {
-	User.findOne(req.body.userId)
+	User.findById(req.body.userId)
 	.then( user => {
 		if(user.nominations.length >= 5){
 			user.isDone = true;
@@ -62,6 +63,7 @@ app.post("/nominate", (req, res) => {
 		let nomsLeft = 5 - user.nominations.length;
 		res.send({nomsLeft : nomsLeft.toString()});
 	})
+	.catch( error => console.log(error) )
 })
 
 app.listen("3000", () => console.log("The Shoppies server started on port 3000!"));

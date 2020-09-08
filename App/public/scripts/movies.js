@@ -1,3 +1,19 @@
+$(document).ready( () => {
+	$(".nomination .list-group-item").each( async function() {
+		try {
+			let movId = $(this).find("input").val();
+			let response = await axios.get("https://www.omdbapi.com/?i=" + movId + "&apikey=746de64b");
+			console.log(response);
+			if(response.data["Response"] == "True"){
+				$(this).html(response.data["Title"] + " (" + response.data["Year"] + ")");
+			}
+		} catch(err) {
+			console.log(err);
+		}
+	})
+});
+
+
 function searchAndDisplay(query) {
 	axios.get("https://www.omdbapi.com/?s=" + query + "&type=movie&apikey=746de64b")
 	.then(response => {
@@ -34,21 +50,10 @@ function searchAndDisplay(query) {
 }
 
 
-// async function nominate(id){
-	
-// }
-
-$("#search-btn").on("click", () => {
-	searchAndDisplay($("#search").val());
-});
-
-
-$(document).on("click", ".nominate", function() {
-	let imdbID = $(this).next().val();
-	console.log(imdbID);
+function nominate(id){
 	axios.post("/nominate", {
 		userId: $("#user-id").val(),
-		movieId: imdbID
+		movieId: id
 	})
 	.then(response => {
 		if(response.status == 200){
@@ -61,7 +66,18 @@ $(document).on("click", ".nominate", function() {
 			$(".container").first().prepend(alertHtml);
 		}
 	})
-	.catch(error => console.log(error));
+	.catch(error => console.log(error));	
+}
+
+$("#search-btn").on("click", () => {
+	searchAndDisplay($("#search").val());
+});
+
+
+$(document).on("click", ".nominate", function() {
+	let imdbID = $(this).next().val();
+	console.log(imdbID);
+	nominate(imdbID);
 })
 
 $("#search").on("keypress", e => {

@@ -22,10 +22,10 @@
 				<div class="card-header">
 					Nominations
 				</div>
-				<ul class="list-group list-group-flush">
+				<ul class="nomination list-group list-group-flush">
 					<% user.nominations.forEach( nomId => { %>
 						<li class="list-group-item">
-							<%= nomId %>
+							<input type="hidden" value="<%= nomId %>">
 						</li>
 					<% }) %>
 				</ul>
