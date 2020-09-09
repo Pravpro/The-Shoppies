@@ -1,9 +1,9 @@
 <%- include("partials/header") %>
 
+<input id="user-id" type="hidden" value="<%= user._id %>">
 <div class="container">
 	<div class="display-4 my-5">The Shoppies</div>
 	<p class="lead">Hi <%=user.email%>, go ahead and nominate 5 of your favourite movies for The Shoppies!</p>
-	<input id="user-id" type="hidden" value="<%= user._id %>">
 	<div class="row">
 		<div class="col-md-8">
 			<div class="input-group mb-3">
@@ -22,11 +22,9 @@
 				<div class="card-header">
 					Nominations
 				</div>
-				<ul class="nomination list-group list-group-flush">
+				<ul id="nominations-list" class="list-group list-group-flush">
 					<% user.nominations.forEach( nomId => { %>
-						<li class="list-group-item">
-							<input type="hidden" value="<%= nomId %>">
-						</li>
+						<input type="hidden" value="<%= nomId %>">
 					<% }) %>
 				</ul>
 			</div>

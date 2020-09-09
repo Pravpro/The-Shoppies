@@ -1,17 +1,30 @@
 $(document).ready( () => {
-	$(".nomination .list-group-item").each( async function() {
-		try {
-			let movId = $(this).find("input").val();
-			let response = await axios.get("https://www.omdbapi.com/?i=" + movId + "&apikey=746de64b");
-			console.log(response);
-			if(response.data["Response"] == "True"){
-				$(this).html(response.data["Title"] + " (" + response.data["Year"] + ")");
-			}
-		} catch(err) {
-			console.log(err);
-		}
-	})
+	$("#nominations-list>input").each( async function(){
+		let movId = $(this).val();
+		await appendNomination($("#nominations-list"), movId);
+		$(this).remove();
+	});
 });
+
+async function appendNomination(list, imdbID) {
+	try {
+		let response = await axios.get("https://www.omdbapi.com/?i=" + imdbID + "&apikey=746de64b");
+		console.log(response);
+		if(response.data["Response"] == "True"){
+			let nomHtml = 
+				'<li class="list-group-item d-flex justify-content-between align-items-center">' + 
+					response.data["Title"] + " (" + response.data["Year"] + ")" +
+					'<button class="delete btn btn-outline-danger">' + 
+						'<i class="far fa-trash-alt"></i>' + 
+					'</button>' +
+					'<input type="hidden" value="' + imdbID + '">' + 
+				'</li>';
+			list.append(nomHtml);
+		}
+	} catch(err) {
+		console.log(err);
+	}
+}
 
 
 function searchAndDisplay(query) {
@@ -50,23 +63,33 @@ function searchAndDisplay(query) {
 }
 
 
-function nominate(id){
-	axios.post("/nominate", {
-		userId: $("#user-id").val(),
-		movieId: id
-	})
-	.then(response => {
+async function nominate(id){
+	try{
+		let response = await axios.post("/nominate", {
+				userId: $("#user-id").val(),
+				movieId: id
+			})
+		// console.log(response);
 		if(response.status == 200){
-			let alertHtml = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-				  'Movie successfuly added to nomination list! You have ' + response.data.nomsLeft + ' nominations left.' +
-				  '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-					'<span aria-hidden="true">&times;</span>' +
-				  '</button>' +
-				'</div>';
-			$(".container").first().prepend(alertHtml);
+			let type = "", message = "";
+			type = "alert-success";
+			message = 'Movie successfuly added to nomination list! You have ' + response.data.nomsLeft + ' nominations left.';
+			createAlert(type, message);
+			appendNomination($("#nominations-list"), id);
 		}
-	})
-	.catch(error => console.log(error));	
+	} catch(error) {
+		console.log(error);
+	}
+}
+
+function createAlert(type, message){
+	let alertHtml = '<div class="alert ' + type + ' alert-dismissible fade show" role="alert">' +
+		  message +
+		  '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+			'<span aria-hidden="true">&times;</span>' +
+		  '</button>' +
+		'</div>';
+	$(".container").first().prepend(alertHtml);
 }
 
 $("#search-btn").on("click", () => {
@@ -75,10 +98,23 @@ $("#search-btn").on("click", () => {
 
 
 $(document).on("click", ".nominate", function() {
-	let imdbID = $(this).next().val();
-	console.log(imdbID);
-	nominate(imdbID);
+	if($("#nominations-list>li").length < 5) {
+		let imdbID = $(this).next().val();
+		nominate(imdbID);	
+	} else {
+		let type = "alert-danger";
+		let message = "You have already nominated 5 Movies. Please remove a nominee to nominate another movie.";
+		createAlert(type, message);
+	}
 })
+
+$(document).on("click", ".delete", function() {
+	// let spinnerHTML = 
+	// 	'<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>' +
+	// 	'<span class="sr-only">Loading...</span>'
+	// $(this).html(spinnerHTML);
+	// deleteNomination();
+});
 
 $("#search").on("keypress", e => {
 	if(e.which == 13) {
