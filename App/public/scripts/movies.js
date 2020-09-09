@@ -109,11 +109,24 @@ $(document).on("click", ".nominate", function() {
 })
 
 $(document).on("click", ".delete", function() {
-	// let spinnerHTML = 
-	// 	'<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>' +
-	// 	'<span class="sr-only">Loading...</span>'
-	// $(this).html(spinnerHTML);
+	let spinnerHTML = 
+		'<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>' +
+		'<span class="sr-only">Loading...</span>'
+	$(this).html(spinnerHTML);
 	// deleteNomination();
+	axios.post("/nominate?_method=DELETE", { 
+		userId: $("#user-id").val(), 
+		movieId: $(this).parent().find("input").val()
+	})
+	.then( response => {
+		if(response.status == 200){
+			console.log(response.data);
+			$(this).parent().remove();
+		} else {
+			createAlert("alert-danger", response.data);
+		}
+	} )
+	.catch(err => console.log(err))
 });
 
 $("#search").on("keypress", e => {

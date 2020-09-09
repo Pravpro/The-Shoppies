@@ -1,15 +1,17 @@
 const express = require("express"),
 	  app = express(),
 	  mongoose = require("mongoose"),
-	  bodyParser = require('body-parser');
+	  bodyParser = require('body-parser'),
+	  methodOverride = require("method-override");
 
 mongoose.connect("mongodb://localhost:27017/shoppies", { useNewUrlParser: true, useUnifiedTopology: true } )
 .then(() => console.log("Connected to shoppies DB!"))
 .catch(err => console.log(err));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(methodOverride('_method'));
 
 // User - email, pasword, nominations
 const userSchema = new mongoose.Schema({
@@ -50,21 +52,37 @@ app.get("/movies", (req, res) => {
 app.post("/nominate", (req, res) => {
 	User.findById(req.body.userId)
 	.then( user => {
-		if(user.nominations.length >= 5){
-			user.isDone = true;
-		}
-		else {
+		if(user.nominations.length < 5){
 			user.nominations.push(req.body.movieId);
+			if(user.nominations.length >= 5) user.isDone = true;
+			user.save()
+			.then(user => console.log(user))
+			.catch(err => console.log(err));
 		}
-		user.save()
-		.then(user => console.log(user))
-		.catch(err => console.log(err));
-		
 		let nomsLeft = 5 - user.nominations.length;
 		res.send({nomsLeft : nomsLeft.toString()});
 	})
 	.catch( error => console.log(error) )
 })
+
+app.delete("/nominate", (req, res) => {
+	console.log("delete route!");
+	console.log(req.body);
+	User.findById(req.body.userId)
+	.then(user => {
+		let i = user.nominations.indexOf(req.body.movieId);
+		if(i != -1) {
+			user.nominations.splice(i,1);
+			user.save()
+			.then(user => {
+				res.send(user);
+			})
+			.catch( err => console.log(err));
+		} else{
+			res.status(404).send("Error Occured: Could not find nomination to delete.");
+		}
+	})
+});
 
 app.listen("3000", () => console.log("The Shoppies server started on port 3000!"));
 
