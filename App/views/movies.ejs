@@ -1,34 +1,38 @@
 <%- include("partials/header") %>
 
-<input id="user-id" type="hidden" value="<%= user._id %>">
 <div class="container">
-	<div class="display-4 my-5">The Shoppies</div>
-	<p class="lead">Hi <%=user.email%>, go ahead and nominate 5 of your favourite movies for The Shoppies!</p>
+	<div class="display-4 my-5 d-none d-md-block">The Shoppies</div>
+	<div class="display-4 my-5 d-md-none text-center">The Shoppies</div>
+	<% if(currentUser){ %>
+		<p class="lead">Hi <%=currentUser.username%>, go ahead and nominate 5 of your favourite movies for The Shoppies!</p>
+	<% } else { %>
+		<p class"lead">Please <a href="/login">login</a> to nominate your top 5 movies for The Shoppies.</p>
+	<% } %>
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-md-7 col-lg-8 order-2 order-md-1">
 			<div class="input-group mb-3">
 				<input id="search" class="form-control" type="text" placeholder="Search movies">
 				<div class="input-group-append">
 					<button id="search-btn" class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
 				</div>
 			</div>
-			
+			<hr>
 			<div id="search-results">
-				
+				<h4 class="text-secondary">Your Search Results will display here...</h4>
 			</div>
 		</div>
-		<div class="col-md-4">
-			<div class="card">
-				<div class="card-header">
-					Nominations
+		<% if(currentUser){ %>	
+			<div class="col-md-5 col-lg-4 order-1 order-md-2 mb-5">
+				<div class="card">
+					<div class="card-header py-2">Your Nominations</div>
+					<ul id="nominations-list" class="list-group list-group-flush">
+						<% currentUser.nominations.forEach( nomId => { %>
+							<input type="hidden" value="<%= nomId %>">
+						<% }) %>
+					</ul>
 				</div>
-				<ul id="nominations-list" class="list-group list-group-flush">
-					<% user.nominations.forEach( nomId => { %>
-						<input type="hidden" value="<%= nomId %>">
-					<% }) %>
-				</ul>
 			</div>
-		</div>
+		<% } %>
 	</div>
 </div>
 
