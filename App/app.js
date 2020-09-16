@@ -36,12 +36,12 @@ passport.deserializeUser(User.deserializeUser()); // Allows passport to deserial
 
 // Page will show login form, and Register button
 app.get("/", (req, res) => {
-	res.redirect("/login");
+	res.redirect("/movies");
 });
 
 // Show Register form
-app.get("/register", (req, res) => {
-	res.render("register");
+app.get("/register", isLoggedOut, (req, res) => {
+	res.render("register", {currentUser: req.user});
 });
 
 app.post("/register", (req, res) => {
@@ -57,8 +57,8 @@ app.post("/register", (req, res) => {
 });
 
 // Show login page
-app.get("/login", (req, res) => {
-	res.render("login");
+app.get("/login", isLoggedOut, (req, res) => {
+	res.render("login", {currentUser: req.user} );
 });
 
 // Login the user
@@ -69,11 +69,12 @@ app.post("/login", passport.authenticate("local", {
 	
 })
 
-// Looks up user and if exists then displays movies page
+// Display movies page
 app.get("/movies", (req, res) => {
 	res.render("movies", {currentUser: req.user});
 })
 
+// Add a movie nomination to user
 app.post("/movies/:imdbId/nominate", isLoggedIn, (req, res) => {
 	console.log("Shold not make it here")
 	if(req.user.nominations.length < 5){
@@ -84,23 +85,24 @@ app.post("/movies/:imdbId/nominate", isLoggedIn, (req, res) => {
 	res.send({nomsLeft : nomsLeft.toString()});
 })
 
+// Delete nomination by user
 app.delete("/movies/:imdbId/nominate", isLoggedIn, (req, res) => {
-	let currentUser = req.user;
-	let imdbId = req.params.imdbId;
-	console.log(currentUser);
-	console.log("The movie id: " + imdbId);
-	let i = currentUser.nominations.indexOf(imdbId);
+	let i = req.user.nominations.indexOf(req.params.imdbId);
 	if(i != -1) {
-		currentUser.nominations.splice(i,1);
-		currentUser.save()
-		.then(user => {
-			res.send(currentUser);
-		})
+		req.user.nominations.splice(i,1);
+		req.user.save()
+		.then( user => res.send(req.user))
 		.catch( err => console.log(err));
 	} else{
 		res.status(404).send("Error Occured: Could not find nomination to delete.");
 	}
 });
+
+// Handle User Logout
+app.get("/logout", (req, res) => {
+	req.logout();
+	res.redirect("/");
+})
 
 function isLoggedIn(req, res, next){
 	if(req.isAuthenticated()){
@@ -119,6 +121,27 @@ function isLoggedIn(req, res, next){
 			res.status(400).send('Bad Request');
 			return;
 	}
+}
+
+function isLoggedOut(req, res, next){
+	if(req.isAuthenticated()){
+		switch (req.accepts(['html', 'json'])) { //possible response types, in order of preference
+			case 'html':
+				res.redirect("/movies");
+				break;
+			case 'json':
+				res.send({redirect: "/movies"});
+				break;
+			default:
+				// if the application requested something we can't support
+				res.status(400).send('Bad Request');
+				return;
+		}
+	} else {
+		console.log("User is not authenticated.");
+		return next();	
+	}
+	
 }
 
 app.listen("3000", () => console.log("The Shoppies server started on port 3000!"));

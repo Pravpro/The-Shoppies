@@ -79,13 +79,13 @@ async function nominate(id){
 }
 
 function createAlert(type, message){
-	let alertHtml = '<div class="alert ' + type + ' alert-dismissible fade show" role="alert">' +
+	let alertHtml = '<div class="alert ' + type + ' alert-dismissible fade show mt-2" role="alert">' +
 		  message +
 		  '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
 			'<span aria-hidden="true">&times;</span>' +
 		  '</button>' +
 		'</div>';
-	$(".container").first().prepend(alertHtml);
+	$("#body-container").prepend(alertHtml);
 	// setTimeout(() => { $(this).remove() }, 5000);
 }
 
