@@ -2,7 +2,7 @@
 goorm.manifest
 
 # Ignore the package lock JSON file
-App/package-lock.json
+package-lock.json
 
 # Don't want to push node modules
-App/node_modules/
+node_modules/

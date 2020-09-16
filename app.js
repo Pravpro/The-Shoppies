@@ -10,7 +10,10 @@ const express 				= require("express"),
 	  app = express();
 
 // App configuratons
-mongoose.connect("mongodb://localhost:27017/shoppies", { useNewUrlParser: true, useUnifiedTopology: true } )
+mongoose.connect("mongodb+srv://pravpro:TheShoppiesUser!@cluster0.j2xos.mongodb.net/the_shoppies?retryWrites=true&w=majority", { 
+	useNewUrlParser: true, 
+	useUnifiedTopology: true 
+})
 .then(() => console.log("Connected to shoppies DB!"))
 .catch(err => console.log(err));
 app.set("view engine", "ejs");
