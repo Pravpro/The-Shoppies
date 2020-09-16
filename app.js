@@ -15,7 +15,7 @@ mongoose.connect("mongodb+srv://pravpro:TheShoppiesUser!@cluster0.j2xos.mongodb.
 	useUnifiedTopology: true 
 })
 .then(() => console.log("Connected to shoppies DB!"))
-.catch(err => console.log(err));
+.catch(err => console.log("ERROR:", err.message));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -147,7 +147,9 @@ function isLoggedOut(req, res, next){
 	
 }
 
-app.listen("3000", () => console.log("The Shoppies server started on port 3000!"));
+// Run the server
+let port = process.env.PORT || 3000;
+app.listen(port, () => console.log("The Shoppies server started on port 3000!"));
 
 
 
