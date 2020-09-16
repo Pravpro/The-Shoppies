@@ -4,11 +4,12 @@
 	<h1 class="display-3 text-center my-5">Welcome to The Shoppies!</h1>
 	<div class="row">
 		<div class="col-10 mx-auto">
+			<!-- Start of card -->
 			<div class="row border rounded-lg py-5">
 				<div class="col border-right">
 					<div class="row">
 						<div class="col-8 mx-auto">
-							
+							<!-- Strart of login form -->
 							<form action="/login" method="POST">
 								<div class="form-group">
 									<label for="username">Username</label>
@@ -18,20 +19,22 @@
 									<label for="login-password">Password</label>
 									<input id="login-password" class="form-control" name="password" type="password" required>
 								</div>
-								<button type="submit" class="btn btn-primary">Submit</button>
+								<button type="submit" class="btn btn-primary">Login</button>
 							</form>
-							
+							<!-- End of Login form -->
 						</div>
 					</div>
 				</div>
 				<div class="col">
-					<div class="row">
-						<div class="col-8 mx-auto">
-							<a href="/register" class="btn btn-secondary">Register</a>
+					<div class="row h-100">
+						<div id="login-or-register" class="bg-white">OR</div>
+						<div class="col-auto mx-auto d-flex">
+							<a href="/register" class="btn btn-warning btn-lg align-self-center"><i class="fas fa-edit"></i> Register</a>
 						</div>
 					</div>
 				</div>
 			</div>
+			<!-- End of card -->
 		</div>
 	</div>
 </div>

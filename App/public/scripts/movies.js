@@ -119,10 +119,7 @@ $(document).on("click", ".delete", function() {
 		'<span class="sr-only">Loading...</span>'
 	$(this).html(spinnerHTML);
 	// deleteNomination();
-	axios.post("/nominate?_method=DELETE", { 
-		userId: $("#user-id").val(), 
-		movieId: $(this).parent().find("input").val()
-	})
+	axios.post("/movies/" + $(this).parent().find("input").val() + "/nominate?_method=DELETE")
 	.then( response => {
 		if(response.status == 200){
 			console.log(response.data);

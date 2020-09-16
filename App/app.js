@@ -84,27 +84,27 @@ app.post("/movies/:imdbId/nominate", isLoggedIn, (req, res) => {
 	res.send({nomsLeft : nomsLeft.toString()});
 })
 
-app.delete("/nominate", (req, res) => {
-	console.log("delete route!");
-	console.log(req.body);
-	User.findById(req.body.userId)
-	.then(user => {
-		let i = user.nominations.indexOf(req.body.movieId);
-		if(i != -1) {
-			user.nominations.splice(i,1);
-			user.save()
-			.then(user => {
-				res.send(user);
-			})
-			.catch( err => console.log(err));
-		} else{
-			res.status(404).send("Error Occured: Could not find nomination to delete.");
-		}
-	})
+app.delete("/movies/:imdbId/nominate", isLoggedIn, (req, res) => {
+	let currentUser = req.user;
+	let imdbId = req.params.imdbId;
+	console.log(currentUser);
+	console.log("The movie id: " + imdbId);
+	let i = currentUser.nominations.indexOf(imdbId);
+	if(i != -1) {
+		currentUser.nominations.splice(i,1);
+		currentUser.save()
+		.then(user => {
+			res.send(currentUser);
+		})
+		.catch( err => console.log(err));
+	} else{
+		res.status(404).send("Error Occured: Could not find nomination to delete.");
+	}
 });
 
 function isLoggedIn(req, res, next){
 	if(req.isAuthenticated()){
+		console.log("User is authenticated.");
 		return next();
 	}
 	switch (req.accepts(['html', 'json'])) { //possible response types, in order of preference
