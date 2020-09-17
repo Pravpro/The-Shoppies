@@ -30,7 +30,7 @@ function searchAndDisplay(query) {
 				resultsHtml += '<div class="card mb-3">' +
 						'<div class="row no-gutters">' +
 							'<div class="col-md-4">' +
-								'<img src="' + movie['Poster'] + '" class="card-img" alt="' + movie['Title'] + ' Poster">' +
+								'<img src="' + movie['Poster'] + '" class="card-img" alt="' + movie['Title'] + ' Poster" onerror="loadBackupImage(this)">' +
 							'</div>' +
 							'<div class="col-md-8">' +
 								'<div class="card-body">' +
@@ -52,6 +52,12 @@ function searchAndDisplay(query) {
 		$("#search-results").html(resultsHtml);
 	})
 	.catch( error => console.log(err));
+}
+
+// On loading error of image, call this function
+function loadBackupImage(el){
+	const backupImage = "/media/movie-poster-replace.jpg";
+	if(el.src != backupImage) el.src = backupImage;
 }
 
 
@@ -133,7 +139,7 @@ $(document).on("click", ".delete", function() {
 
 $(document).on("load", ".alert", function(){
 	setTimeout(() => { $(this).remove() }, 5000);
-})
+});
 
 $("#search").on("keypress", e => {
 	if(e.which == 13) {
